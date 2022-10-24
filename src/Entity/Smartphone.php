@@ -29,15 +29,11 @@ class Smartphone
 
     #[ORM\Column(length: 80)]
     #[Groups(["getPhones"])]
-    private string $name;
+    private string $model;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(["getPhones"])]
     private string $description;
-
-    #[ORM\ManyToOne(inversedBy: 'smartphones'), ORM\JoinColumn(name: 'brandId', onDelete:"CASCADE")]
-    #[Groups(["getPhones"])]
-    private Brand $brand;
 
     #[ORM\Column(type: Types::DECIMAL, scale: 1)]
     #[Groups(["getPhones"])]
@@ -52,14 +48,14 @@ class Smartphone
         return $this->id;
     }
 
-    public function getName(): string
+    public function getModel(): string
     {
-        return $this->name;
+        return $this->model;
     }
 
-    public function setName(string $name): void
+    public function setModel(string $model): void
     {
-        $this->name = $name;
+        $this->model = $model;
     }
 
     public function getDescription(): string
@@ -70,16 +66,6 @@ class Smartphone
     public function setDescription(string $description): void
     {
         $this->description = $description;
-    }
-
-    public function getBrand(): Brand
-    {
-        return $this->brand;
-    }
-
-    public function setBrand(Brand $brand): void
-    {
-        $this->brand = $brand;
     }
 
     public function getScreenSize(): string

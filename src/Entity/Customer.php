@@ -6,29 +6,33 @@ use App\Repository\CustomerRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Table(uniqueConstraints: [new ORM\UniqueConstraint(columns: ['client', 'email'])])]
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
 class Customer
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column]
+    #[Groups(["getCustomers"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 80)]
+    #[Groups(["getCustomers"])]
     private ?string $email = null;
 
     #[ORM\Column(length: 80)]
+    #[Groups(["getCustomers"])]
     private string $firstName;
 
     #[ORM\Column(length: 80)]
+    #[Groups(["getCustomers"])]
     private string $lastName;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[Groups(["getCustomers"])]
     private \DateTimeInterface $creationDate;
 
     #[ORM\ManyToOne(inversedBy: 'customers'), ORM\JoinColumn(name: 'userId')]
+//    #[Groups(["getCustomers"])]
     private ?User $user = null;
 
     public function getId(): ?int
