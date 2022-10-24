@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Smartphone;
-use App\Repository\BrandRepository;
 use App\Repository\SmartphoneRepository;
 use App\Service\RestPaginator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -134,12 +133,11 @@ class SmartphoneController extends AbstractController
         Smartphone             $currentphone,
         EntityManagerInterface $em,
         TagAwareCacheInterface $cachePool,
-        ValidatorInterface     $validator,
-        BrandRepository $brandRepository
+        ValidatorInterface     $validator
     ) : JsonResponse
     {
         $newphone = $serializer->deserialize($request->getContent(), Smartphone::class, 'json');
-        $currentphone->setName($newphone->getName());
+        $currentphone->setModel($newphone->getName());
         $currentphone->setDescription($newphone->getDescription());
 
         // Check for validation error on Request phone json
@@ -149,9 +147,6 @@ class SmartphoneController extends AbstractController
         }
 
         $content = $request->toArray();
-        $brandId = $content['brandId'] ?? -1;
-
-        $currentphone->setBrand($brandRepository->find($brandId));
 
         $em->persist($currentphone);
         $em->flush();
