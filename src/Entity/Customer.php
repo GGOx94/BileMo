@@ -3,11 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\CustomerRepository;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
 
-#[ORM\Table(uniqueConstraints: [new ORM\UniqueConstraint(columns: ['client', 'email'])])]
+#[ORM\Table(uniqueConstraints: [new ORM\UniqueConstraint(columns: ['userId', 'email'])])]
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
 class Customer
 {
@@ -15,21 +16,21 @@ class Customer
     #[Groups(["getCustomers"])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 80)]
-    #[Groups(["getCustomers"])]
+    #[ORM\Column(type: Types::STRING, length: 80)]
+    #[Groups(["getCustomers", "createCustomers"])]
     private ?string $email = null;
 
-    #[ORM\Column(length: 80)]
-    #[Groups(["getCustomers"])]
+    #[ORM\Column(type: Types::STRING, length: 80)]
+    #[Groups(["getCustomers", "createCustomers"])]
     private string $firstName;
 
-    #[ORM\Column(length: 80)]
-    #[Groups(["getCustomers"])]
+    #[ORM\Column(type: Types::STRING, length: 80)]
+    #[Groups(["getCustomers", "createCustomers"])]
     private string $lastName;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     #[Groups(["getCustomers"])]
-    private \DateTimeInterface $creationDate;
+    private DateTimeInterface $creationDate;
 
     #[ORM\ManyToOne(inversedBy: 'customers'), ORM\JoinColumn(name: 'userId')]
 //    #[Groups(["getCustomers"])]
@@ -83,17 +84,17 @@ class Customer
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return DateTimeInterface
      */
-    public function getCreationDate(): \DateTimeInterface
+    public function getCreationDate(): DateTimeInterface
     {
         return $this->creationDate;
     }
 
     /**
-     * @param \DateTimeInterface $creationDate
+     * @param DateTimeInterface $creationDate
      */
-    public function setCreationDate(\DateTimeInterface $creationDate): void
+    public function setCreationDate(DateTimeInterface $creationDate): void
     {
         $this->creationDate = $creationDate;
     }

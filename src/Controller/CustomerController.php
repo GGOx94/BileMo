@@ -19,13 +19,14 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
+use OpenApi\Attributes as OAA; //TODO OA
 
 class CustomerController extends AbstractController
 {
     private const CACHE_CUSTOMERS = "cacheCustomers";
     private SerializationContext $serializationContext;
 
-    public function __construct()
+    public function __construct(private readonly Security $security, private readonly CustomerRepository $customerRepo)
     {
         $this->serializationContext = SerializationContext::create()->setGroups(['getCustomers']);
     }
@@ -39,32 +40,30 @@ class CustomerController extends AbstractController
      * @OA\Tag(name="Customers")
      */
     #[Route('/api/customers/', name: 'api_customers', methods: ['GET'], format: 'json')]
-    public function getAllSmartphones(
+    public function getAllCustomers(
         Request                $request,
-        Security                $security,
-        CustomerRepository      $customerRepository,
         SerializerInterface    $serializer,
         TagAwareCacheInterface $cachePool,
         RestPaginator          $paginator
     ) : JsonResponse
     {
-        $usrId = $security->getUser()->getId();
+        $usrId = $this->security->getUser()->getId();
 
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 3);
 
         $customerCountCacheId = "getCustomers-count-$usrId";
         $customerCount = $cachePool->get($customerCountCacheId, function (ItemInterface $item)
-            use ($customerRepository, $usrId) {
+            use ($usrId) {
                 $item->tag(self::CACHE_CUSTOMERS)->expiresAfter(60);
-                return $customerRepository->getCountOfUser($usrId);
+                return $this->customerRepo->getCountOfUser($usrId);
         });
 
         $idCache = "getAllCustomers-$usrId-$page-$limit";
         $jsonCustomersList = $cachePool->get($idCache, function (ItemInterface $item)
-            use ($customerRepository, $usrId, $serializer, $page, $limit, $customerCount, $paginator) {
+            use ($usrId, $serializer, $page, $limit, $customerCount, $paginator) {
                 $item->tag(self::CACHE_CUSTOMERS)->expiresAfter(60);
-                $list = $customerRepository->findOfUserWithPagination($usrId, $page, $limit);
+                $list = $this->customerRepo->findOfUserWithPagination($usrId, $page, $limit);
 
                 $pages = $paginator->asArray("api_customers", $page, $limit, $customerCount);
                 return $serializer->serialize(array("_pages" => $pages, "items" => $list), 'json', $this->serializationContext);
@@ -73,9 +72,32 @@ class CustomerController extends AbstractController
         return new JsonResponse(data: $jsonCustomersList, status: Response::HTTP_OK, json: true);
     }
 
+    /**
+     * Create a new customer for the currently logged-in user.
+     */
+    #[OAA\RequestBody(description: "Create a new customer object", required: true,
+        content: new OAA\JsonContent(ref: new Model(type: Customer::class, groups: ["createCustomers"])))]
+    #[OAA\Response(response: 201, description: "Your customer has been created",
+        content: new OAA\JsonContent(ref: new Model(type: Customer::class, groups: ["getCustomers"])))]
+    #[OAA\Tag(name: "Customers")]
+    #[Route('/api/customers/', name: 'api_customer_post', methods: ['POST'], format: 'json')]
+    public function createCustomer(Request $request) : JsonResponse
+    {
+        $customer = new Customer();
+        return new JsonResponse(data: $customer, status: Response::HTTP_CREATED, json:true);
+    }
+
+    //TODO : update customer (PUT/PATCH ?)
+
     #[Route('/api/customers/{id}', name: 'api_customer_get', methods: ['GET'], format: 'json')]
     public function fetchCustomer(Customer $customer, SerializerInterface $serializer): JsonResponse
     {
+        $this->checkUserRightsOnCustomer($customer);
+
+        if($customer->getUser()->getId() !== $this->security->getUser()->getId()) {
+            throw new \LogicException("You don't have the rights to access this resource");
+        }
+
         $jsonCustomer = $serializer->serialize($customer, 'json', $this->serializationContext);
         return new JsonResponse($jsonCustomer, Response::HTTP_OK, [], true);
     }
@@ -83,10 +105,19 @@ class CustomerController extends AbstractController
     #[Route('/api/customers/{id}', name: 'api_customer_delete', methods: ['DELETE'], format: 'json')]
     public function deleteCustomer(Customer $customer, EntityManagerInterface $em, TagAwareCacheInterface $cachePool): JsonResponse
     {
+        $this->checkUserRightsOnCustomer($customer);
+
         $cachePool->invalidateTags([self::CACHE_CUSTOMERS]);
         $em->remove($customer);
         $em->flush();
 
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        return new JsonResponse(status: Response::HTTP_NO_CONTENT);
+    }
+
+    private function checkUserRightsOnCustomer(Customer $customer) : void
+    {
+        if($customer->getUser()->getId() !== $this->security->getUser()->getId()) {
+            throw new \LogicException("You don't have the rights to access this resource.");
+        }
     }
 }
