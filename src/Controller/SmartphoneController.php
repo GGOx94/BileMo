@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Smartphone;
+use App\Exception\ApiValidationException;
 use App\Repository\SmartphoneRepository;
 use App\Service\RestPaginator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,8 +38,8 @@ class SmartphoneController extends AbstractController
      * Get the BileMo smartphones list (paginated).
      * @OA\Response(response=200, description="The smartphones list",
      *     @OA\JsonContent(type="array", @OA\Items(ref=@Model(type=Smartphone::class, groups={"getPhones"}))))
-     * @OA\Parameter(name="page", in="query", description="The page of the result you want", @OA\Schema(type="int"))
-     * @OA\Parameter(name="limit", in="query", description="Number of element per page you want", @OA\Schema(type="int"))
+     * @OA\Parameter(name="page", in="query", description="The page of the result you want", @OA\Schema(type="int", default="1"))
+     * @OA\Parameter(name="limit", in="query", description="Number of element per page you want", @OA\Schema(type="int", default="3"))
      * @OA\Tag(name="Smartphones")
      */
     #[Route('/api/smartphones/', name: 'api_phones', methods: ['GET'], format: 'json')]
@@ -143,7 +144,7 @@ class SmartphoneController extends AbstractController
         // Check for validation error on Request phone json
         $errors = $validator->validate($currentphone);
         if ($errors->count() > 0) {
-            return new JsonResponse($serializer->serialize($errors, 'json'), Response::HTTP_BAD_REQUEST, [], true);
+            throw new ApiValidationException($errors);
         }
 
         $content = $request->toArray();
