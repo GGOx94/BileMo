@@ -5,6 +5,7 @@ namespace App\Entity;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use JMS\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\Since;
 use App\Repository\CustomerRepository;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -28,29 +29,35 @@ class Customer
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column]
     #[Groups(["getCustomers"])]
-    private ?int $id = null;
+    private int $id;
 
     #[ORM\Column(type: Types::STRING, length: 125)]
-    #[Groups(["getCustomers", "createCustomers"])]
+    #[Groups(["getCustomers", "modifyCustomers"])]
     #[Assert\NotBlank, Assert\Email, Assert\Length(max: 125)]
-    private ?string $email = null;
+    private string $email;
 
     #[ORM\Column(type: Types::STRING, length: 80)]
-    #[Groups(["getCustomers", "createCustomers"])]
+    #[Groups(["getCustomers", "modifyCustomers"])]
     #[Assert\NotBlank, Assert\Length(min: 2, max: 80)]
     private string $firstName;
 
     #[ORM\Column(type: Types::STRING, length: 80)]
-    #[Groups(["getCustomers", "createCustomers"])]
+    #[Groups(["getCustomers", "modifyCustomers"])]
     #[Assert\NotBlank, Assert\Length(min: 2, max: 80)]
     private string $lastName;
+
+    #[ORM\Column(type: Types::STRING, length: 20, nullable: true)]
+    #[Groups(["getCustomers", "modifyCustomers"])]
+    #[Assert\Length(min: 10, max: 20)]
+    #[Since("2.0")]
+    private string $phoneNumber;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     #[Groups(["getCustomers"])]
     private DateTimeInterface $creationDate;
 
     #[ORM\ManyToOne(inversedBy: 'customers'), ORM\JoinColumn(name: 'userId')]
-    private ?User $user = null;
+    private User $user;
 
     public function getId(): ?int
     {
@@ -106,4 +113,15 @@ class Customer
     {
         $this->user = $user;
     }
+
+    public function getPhoneNumber(): string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(string $phoneNumber): void
+    {
+        $this->phoneNumber = $phoneNumber;
+    }
+
 }

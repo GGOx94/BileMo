@@ -6,11 +6,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RestPaginator
 {
-    private int $refType = UrlGeneratorInterface::ABSOLUTE_PATH;
-
-    public function __construct(private readonly UrlGeneratorInterface $router)
-    {
-    }
+    public function __construct(private readonly UrlGeneratorInterface $router) {}
 
     public function asArray(string $route, int $page, int $limit, int $totalCount) : array
     {
@@ -36,6 +32,6 @@ class RestPaginator
 
     private function genRoute(string $route, int $page, int $limit) : string
     {
-        return $this->router->generate($route, ["page" => $page, "limit" => $limit], $this->refType);
+        return $this->router->generate($route, ["page" => $page, "limit" => $limit], UrlGeneratorInterface::ABSOLUTE_PATH);
     }
 }

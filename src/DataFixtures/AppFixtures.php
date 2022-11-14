@@ -48,6 +48,8 @@ class AppFixtures extends Fixture
                 $customer->setEmail("user$i@demo.com");
                 $customer->setFirstName("John-$i-".$clt->getName());
                 $customer->setLastName("Doe-$i-".$clt->getName());
+                // Api v2.0
+                $customer->setPhoneNumber("0123456789");
                 $customer->setCreationDate(new \DateTimeImmutable());
                 $customer->setUser($clt);
                 $manager->persist($customer);
