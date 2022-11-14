@@ -3,14 +3,14 @@ nelmio_api_doc:
         info:
             title: BileMo API
             description: BileMo Smartphones API !
-            version: 1.0.0
+            version: 2.0.0
         paths:
             /api/login_check:
                 post:
                     tags:
                         - Token
                     operationId: postCredentialsItem
-                    summary: Obtain the login token
+                    summary: Obtain the login token, given your credentials
                     requestBody:
                         description: Create a new token
                         content:
@@ -37,7 +37,7 @@ nelmio_api_doc:
                     properties:
                         username:
                             type: string
-                            default: admin@bilemo.com
+                            default: client0@demo.com
                         password:
                             type: string
                             default: Secret123
@@ -49,5 +49,5 @@ nelmio_api_doc:
         security:
             - bearerAuth: []
     areas: # to filter documented areas
-        path_patterns:
-            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+        default:
+            with_annotation: true
