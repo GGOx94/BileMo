@@ -30,9 +30,7 @@ class SmartphoneController extends AbstractController
         private readonly JsonEntityHelper           $jsonHelper
     ) {}
 
-    /**
-     * Fetch all of our smartphones (paginated response).
-     */
+    /** Fetch all of our smartphones (paginated response) */
     #[Nelmio\Areas(["default"]), OA\Tag(name: "Smartphones")]
     #[OA\Parameter(name: "page", description: "The page of the result", in: "query", required: false, schema: new OA\Schema(type: "integer", default: 1))]
     #[OA\Parameter(name: "limit", description: "Number of elements per page", in: "query", required: false, schema: new OA\Schema(type: "integer", default: 3))]
@@ -69,10 +67,8 @@ class SmartphoneController extends AbstractController
         return new JsonResponse(data: $jsonPhonesList, status: Response::HTTP_OK, json: true);
     }
 
-    /**
-     * Fetch a specific smartphone.
-     */
-    #[Nelmio\Areas(["default"]), OA\Tag(name: "Smartphones")]
+    /** Fetch a specific smartphone */
+    #[OA\Tag(name: "Smartphones")]
     #[OA\PathParameter(name: "id", description: "The id of the smartphone", required: true, schema: new OA\Schema(type: "integer"))]
     #[OA\Response(response: 200, description: "The smartphone data is in the response body", content: new OA\JsonContent(ref: new Model(type: Smartphone::class, groups: ["getPhones"])))]
     #[Route('/api/smartphones/{id}', name: 'api_phone_get', methods: ['GET'], format: 'json')]
@@ -82,6 +78,10 @@ class SmartphoneController extends AbstractController
         return new JsonResponse($jsonphone, Response::HTTP_OK, [], true);
     }
 
+    /** Create a new smartphone */
+    #[OA\Tag(name: "[Admin] Smartphones")]
+    #[OA\PathParameter(name: "id", description: "The id of the smartphone", required: true, schema: new OA\Schema(type: "integer"))]
+    #[OA\Response(response: 201, description: "The smartphone has been created and is present in the response body", content: new OA\JsonContent(ref: new Model(type: Smartphone::class, groups: ["getPhones"])))]
     #[IsGranted('ROLE_ADMIN', message: "You don't have access to phone creation")]
     #[Route('/api/smartphones/', name:"api_phone_create", methods: ['POST'], format: 'json')]
     public function createPhone(
@@ -101,6 +101,10 @@ class SmartphoneController extends AbstractController
         return new JsonResponse($jsonphone, Response::HTTP_CREATED, ["Location" => $location], true);
     }
 
+    /** Update an existing smartphone */
+    #[OA\Tag(name: "[Admin] Smartphones")]
+    #[OA\PathParameter(name: "id", description: "The id of the smartphone", required: true, schema: new OA\Schema(type: "integer"))]
+    #[OA\Response(response: 204, description: "The smartphone has been updated")]
     #[IsGranted('ROLE_ADMIN', message: "You don't have access to phone modification")]
     #[Route('/api/smartphones/{id}', name:"api_phone_update", methods:['PUT'], format: 'json')]
     public function updatePhone(
@@ -121,6 +125,10 @@ class SmartphoneController extends AbstractController
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
+    /** Delete a smartphone */
+    #[OA\Tag(name: "[Admin] Smartphones")]
+    #[OA\PathParameter(name: "id", description: "The id of the smartphone", required: true, schema: new OA\Schema(type: "integer"))]
+    #[OA\Response(response: 204, description: "The smartphone has been deleted")]
     #[IsGranted('ROLE_ADMIN', message: "You don't have access to phone deletion")]
     #[Route('/api/smartphones/{id}', name: 'api_phone_delete', methods: ['DELETE'], format: 'json')]
     public function deletePhone(Smartphone $phone, TagAwareCacheInterface $cachePool): JsonResponse

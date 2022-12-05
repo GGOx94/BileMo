@@ -48,6 +48,6 @@ nelmio_api_doc:
                     name: Authorization # or another header name
         security:
             - bearerAuth: []
-    areas: # to filter documented areas
-        default:
-            with_annotation: true
+    areas:
+      default:
+          path_patterns: [ ^/api/smartphones, ^/api/customers ]

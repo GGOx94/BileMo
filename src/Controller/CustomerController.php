@@ -148,7 +148,7 @@ class CustomerController extends AbstractController
     /**
      * Delete one of your customer.
      */
-    #[Nelmio\Areas(["default"]), OA\Tag(name: "Customers")]
+    #[OA\Tag(name: "Customers")]
     #[OA\PathParameter(name: "id", description: "The id of your customer", required: true, schema: new OA\Schema(type: "integer"))]
     #[OA\Response(response: 204, description: "Your customer has been deleted")]
     #[Route('/api/customers/{id}', name: 'api_customer_delete', methods: ['DELETE'], format: 'json')]

@@ -17,7 +17,7 @@ class JsonEntityHelper
     public function __construct(
         private readonly ValidatorInterface         $validator,
         private readonly SerializerInterface        $serializer,
-        private readonly ApiVersioning $versioning
+        private readonly ApiVersioning              $versioning
     ) {}
 
     public function serialize(mixed $data, array $groups) : string

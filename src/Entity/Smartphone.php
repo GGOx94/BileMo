@@ -8,6 +8,7 @@ use JMS\Serializer\Annotation\Groups;
 
 use Doctrine\ORM\Mapping as ORM;
 use Hateoas\Configuration\Annotation as Hateoas;
+use JMS\Serializer\Annotation\Since;
 
 /**
  * @Hateoas\Relation("self",
