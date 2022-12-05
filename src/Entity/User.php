@@ -99,37 +99,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    /**
-     * @return Collection
-     */
     public function getCustomers(): Collection
     {
         return $this->customers;
     }
 
-    /**
-     * @param Collection $customers
-     */
     public function setCustomers(Collection $customers): void
     {
         $this->customers = $customers;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     */
     public function setName(?string $name): void
     {
         $this->name = $name;
     }
-
-
 }

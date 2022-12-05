@@ -6,8 +6,8 @@ use App\Exception\ApiValidationException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 class ExceptionSubscriber implements EventSubscriberInterface
 {
@@ -15,26 +15,26 @@ class ExceptionSubscriber implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
 
-        if($exception instanceof HttpException)
-        {
+        if ($exception instanceof HttpException) {
             $data = ['status' => $exception->getStatusCode()];
 
-            $data["message"] = match ($exception->getStatusCode()) {
-                403 => "Access denied.",
-                404 => "Resource not found.",
-                405 => "Method not allowed on the targeted resource.",
+            $data['message'] = match ($exception->getStatusCode()) {
+                403 => 'Access denied.',
+                404 => 'Resource not found.',
+                405 => 'Method not allowed on the targeted resource.',
                 default => $exception->getMessage(),
             };
 
-            if($exception instanceof ApiValidationException) {
+            if ($exception instanceof ApiValidationException) {
                 $data['errors'] = $exception->getFormattedErrors();
             }
 
             $event->setResponse(new JsonResponse($data));
+
             return;
         }
 
-        $data = ['status' => 500, 'message' => "Internal server error."];
+        $data = ['status' => 500, 'message' => 'Internal server error.'];
         $event->setResponse(new JsonResponse($data));
     }
 

@@ -15,7 +15,7 @@ class ApiValidationException extends BadRequestHttpException
         $this->errList = $list;
     }
 
-    public function getFormattedErrors() : array
+    public function getFormattedErrors(): array
     {
         $results = [];
         foreach ($this->errList as $err) {
