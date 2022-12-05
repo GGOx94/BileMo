@@ -39,27 +39,27 @@ class CustomerRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOfUserWithPagination(int $userId, int $page, int $limit) : mixed
+    public function findOfUserWithPagination(int $userId, int $page, int $limit): mixed
     {
         $qb = $this->createQueryBuilder('b')
             ->leftJoin('b.user', 'u')
             ->where('u.id = :userId')
-            ->setParameter("userId", $userId)
+            ->setParameter('userId', $userId)
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit);
+
         return $qb->getQuery()->getResult();
     }
 
-
-    public function getCountOfUser(int $userId) : int
+    public function getCountOfUser(int $userId): int
     {
         $qb = $this->createQueryBuilder('b')
         ->select('count(b.id)')
         ->leftJoin('b.user', 'u')
         ->where('u.id = :userId')
-        ->setParameter("userId", $userId);
+        ->setParameter('userId', $userId);
 
-        return  $qb->getQuery()->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
 //    /**

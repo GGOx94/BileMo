@@ -4,11 +4,9 @@ namespace App\Entity;
 
 use App\Repository\SmartphoneRepository;
 use Doctrine\DBAL\Types\Types;
-use JMS\Serializer\Annotation\Groups;
-
 use Doctrine\ORM\Mapping as ORM;
 use Hateoas\Configuration\Annotation as Hateoas;
-use JMS\Serializer\Annotation\Since;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * @Hateoas\Relation("self",
@@ -25,23 +23,23 @@ use JMS\Serializer\Annotation\Since;
 class Smartphone
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column]
-    #[Groups(["getPhones"])]
+    #[Groups(['getPhones'])]
     private int $id;
 
     #[ORM\Column(length: 80)]
-    #[Groups(["getPhones", "modifyPhones"])]
+    #[Groups(['getPhones', 'modifyPhones'])]
     private string $model;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["getPhones", "modifyPhones"])]
+    #[Groups(['getPhones', 'modifyPhones'])]
     private string $description;
 
     #[ORM\Column(type: Types::DECIMAL, scale: 1)]
-    #[Groups(["getPhones", "modifyPhones"])]
+    #[Groups(['getPhones', 'modifyPhones'])]
     private float $screenSize;
 
     #[ORM\Column(type: Types::DECIMAL, scale: 2)]
-    #[Groups(["getPhones", "modifyPhones"])]
+    #[Groups(['getPhones', 'modifyPhones'])]
     private float $price;
 
     public function getId(): ?int

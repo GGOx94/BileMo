@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Smartphone|null find($id, $lockMode = null, $lockVersion = null)
  * @method Smartphone|null findOneBy(array $criteria, array $orderBy = null)
  * @method Smartphone[]    findAll()
- * @method Book[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Book[]          findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class SmartphoneRepository extends ServiceEntityRepository
 {
@@ -44,16 +44,17 @@ class SmartphoneRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('b')
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit);
+
         return $qb->getQuery()->getResult();
     }
 
-    public function getCount() : int
+    public function getCount(): int
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('count(b.id)');
-        $qb->from('App\Entity\Smartphone','b');
+        $qb->from('App\Entity\Smartphone', 'b');
 
-        return  $qb->getQuery()->getSingleScalarResult();
+        return $qb->getQuery()->getSingleScalarResult();
     }
 
 //    /**

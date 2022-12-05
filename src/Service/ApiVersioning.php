@@ -12,16 +12,16 @@ class ApiVersioning
 
     public function __construct(private readonly RequestStack $requestStack, ParameterBagInterface $parameterBag)
     {
-        $this->defaultVersion = $parameterBag->get("default_api_version");
+        $this->defaultVersion = $parameterBag->get('default_api_version');
 
         $version = $this->defaultVersion;
 
         $headers = $this->requestStack->getCurrentRequest()->headers;
-        $accepts = explode(";", $headers->get("accept"));
+        $accepts = explode(';', $headers->get('accept'));
 
         foreach ($accepts as $accept) {
-            if(str_contains($accept, "version")) {
-                $version = explode("=", $accept)[1];
+            if (str_contains($accept, 'version')) {
+                $version = explode('=', $accept)[1];
                 break;
             }
         }
@@ -44,9 +44,8 @@ class ApiVersioning
         return $this->currentVersion;
     }
 
-    public function testExpr() : bool
+    public function testExpr(): bool
     {
         return true;
     }
-
 }
