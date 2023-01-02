@@ -1,3 +1,0 @@
-Gen private key : openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
-Gen public key : openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout
-Gen token : lexik:jwt:generate-token democlient@demo.com
